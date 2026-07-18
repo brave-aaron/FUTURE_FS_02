@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mini CRM — Connexion</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body class="login-body">
+  <div class="login-card">
+    <div class="login-logo">
+      <span class="logo-dot"></span>
+      <h1>Mini<strong>CRM</strong></h1>
+    </div>
+    <p class="login-subtitle">Gestion des leads clients</p>
+
+    <form id="loginForm" class="login-form">
+      <div class="field">
+        <label for="username">Identifiant</label>
+        <input type="text" id="username" name="username" placeholder="admin" required autofocus>
+      </div>
+      <div class="field">
+        <label for="password">Mot de passe</label>
+        <input type="password" id="password" name="password" placeholder="••••••••" required>
+      </div>
+      <p id="errorMsg" class="error-msg hidden"></p>
+      <button type="submit" class="btn-primary btn-full">Se connecter</button>
+    </form>
+
+    <p class="login-hint">Démo : <code>admin</code> / <code>admin123</code></p>
+  </div>
+
+  <script src="js/login.js"></script>
+</body>
+</html>

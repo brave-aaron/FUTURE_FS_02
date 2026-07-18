@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mini CRM — Tableau de bord</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <header class="topbar">
+    <div class="topbar-logo">
+      <span class="logo-dot"></span>
+      <span>Mini<strong>CRM</strong></span>
+    </div>
+    <nav class="topbar-nav">
+      <a href="dashboard.html" class="active">Tableau de bord</a>
+      <a href="leads.html">Leads</a>
+    </nav>
+    <div class="topbar-user">
+      <div class="notif-wrapper">
+        <button id="notifBtn" class="icon-btn" title="Notifications">
+          🔔<span id="notifDot" class="notif-dot hidden"></span>
+        </button>
+        <div id="notifPanel" class="notif-panel hidden">
+          <div class="notif-header">Activité récente</div>
+          <div id="notifList" class="notif-list"></div>
+        </div>
+      </div>
+      <span id="userLabel"></span>
+      <button id="logoutBtn" class="btn-ghost">Déconnexion</button>
+    </div>
+  </header>
+
+  <main class="dashboard">
+    <section class="dashboard-header">
+      <div>
+        <h1>Vue d'ensemble</h1>
+        <p class="muted" id="welcomeMsg">Voici l'état actuel de votre pipeline commercial.</p>
+      </div>
+      <a href="leads.html" class="btn-primary">+ Nouveau lead</a>
+    </section>
+
+    <!-- Cartes de métriques -->
+    <section class="metric-grid" id="metricGrid">
+      <div class="metric-card">
+        <div class="metric-top"><span>Total leads actifs</span><span class="metric-icon">👥</span></div>
+        <h3 id="mTotal">—</h3>
+        <p class="metric-sub">Cumul en base de données</p>
+      </div>
+      <div class="metric-card">
+        <div class="metric-top"><span>Étape qualifiée</span><span class="metric-icon">✅</span></div>
+        <h3 id="mQualified">—</h3>
+        <p class="metric-sub" id="mQualifiedSub">— du pipeline</p>
+      </div>
+      <div class="metric-card">
+        <div class="metric-top"><span>Taux de conversion</span><span class="metric-icon">📈</span></div>
+        <h3 id="mConversion" class="accent-converted">—</h3>
+        <p class="metric-sub accent-converted">Leads convertis avec succès</p>
+      </div>
+      <div class="metric-card">
+        <div class="metric-top"><span>Valeur du pipeline</span><span class="metric-icon">💰</span></div>
+        <h3 id="mPipeline">—</h3>
+        <p class="metric-sub accent-value">Deals actifs prévisionnels</p>
+      </div>
+    </section>
+
+    <!-- Répartition du pipeline -->
+    <section class="pipeline-card">
+      <h4>Répartition du pipeline</h4>
+      <div class="pipeline-bar" id="pipelineBar"></div>
+      <div class="pipeline-legend" id="pipelineLegend"></div>
+    </section>
+
+    <!-- Derniers leads + activité -->
+    <section class="split-grid">
+      <div class="panel latest-leads">
+        <div class="panel-header">
+          <h4>Derniers leads enregistrés</h4>
+          <span class="muted small">Top 5</span>
+        </div>
+        <div class="table-wrapper flush">
+          <table>
+            <thead>
+              <tr><th>Nom</th><th>Société</th><th>Statut</th><th class="text-right">Valeur</th></tr>
+            </thead>
+            <tbody id="latestLeadsBody"></tbody>
+          </table>
+          <p id="latestEmpty" class="empty-state hidden">Aucun lead pour le moment.</p>
+        </div>
+      </div>
+
+      <div class="panel activity-feed">
+        <div class="panel-header"><h4>Activité récente</h4></div>
+        <div id="activityList" class="activity-list"></div>
+        <p id="activityEmpty" class="empty-state hidden">Aucune activité récente.</p>
+      </div>
+    </section>
+  </main>
+
+  <!-- Toasts -->
+  <div id="toastContainer" class="toast-container"></div>
+
+  <script src="js/api.js"></script>
+  <script src="js/dashboard.js"></script>
+</body>
+</html>

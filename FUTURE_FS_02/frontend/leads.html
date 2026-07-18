@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mini CRM — Leads</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <header class="topbar">
+    <div class="topbar-logo">
+      <span class="logo-dot"></span>
+      <span>Mini<strong>CRM</strong></span>
+    </div>
+    <nav class="topbar-nav">
+      <a href="dashboard.html">Tableau de bord</a>
+      <a href="leads.html" class="active">Leads</a>
+    </nav>
+    <div class="topbar-user">
+      <div class="notif-wrapper">
+        <button id="notifBtn" class="icon-btn" title="Notifications">
+          🔔<span id="notifDot" class="notif-dot hidden"></span>
+        </button>
+        <div id="notifPanel" class="notif-panel hidden">
+          <div class="notif-header">Activité récente</div>
+          <div id="notifList" class="notif-list"></div>
+        </div>
+      </div>
+      <span id="userLabel"></span>
+      <button id="logoutBtn" class="btn-ghost">Déconnexion</button>
+    </div>
+  </header>
+
+  <main class="dashboard">
+    <section class="dashboard-header">
+      <div>
+        <h1>Vos leads</h1>
+        <p class="muted">Suivez, qualifiez et convertissez vos prospects.</p>
+      </div>
+      <div class="header-actions">
+        <button id="exportBtn" class="btn-outline">⬇ Exporter en CSV</button>
+        <button id="newLeadBtn" class="btn-primary">+ Nouveau lead</button>
+      </div>
+    </section>
+
+    <!-- Barre d'outils : recherche, filtres, tri -->
+    <section class="toolbar-card">
+      <form id="searchForm" class="search-row">
+        <input type="text" id="searchInput" placeholder="Rechercher par nom, email ou société...">
+        <button type="submit" class="btn-outline">Rechercher</button>
+      </form>
+      <div class="filters-row">
+        <div class="field">
+          <label>Statut</label>
+          <select id="statusFilter">
+            <option value="all">Tous les statuts</option>
+            <option value="new">Nouveau</option>
+            <option value="qualified">Qualifié</option>
+            <option value="contacted">Contacté</option>
+            <option value="negotiation">Négociation</option>
+            <option value="converted">Converti</option>
+            <option value="lost">Perdu</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>Source</label>
+          <select id="sourceFilter">
+            <option value="all">Toutes les sources</option>
+            <option value="website">Site Web</option>
+            <option value="linkedin">LinkedIn</option>
+            <option value="referral">Référence</option>
+            <option value="email">Email</option>
+            <option value="phone">Téléphone</option>
+            <option value="other">Autre</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>Tri</label>
+          <select id="sortSelect">
+            <option value="createdAt_desc">Date (plus récent)</option>
+            <option value="createdAt_asc">Date (plus ancien)</option>
+            <option value="fullName_asc">Nom (A-Z)</option>
+            <option value="fullName_desc">Nom (Z-A)</option>
+            <option value="value_desc">Valeur (décroissant)</option>
+            <option value="value_asc">Valeur (croissant)</option>
+          </select>
+        </div>
+        <button id="resetFiltersBtn" class="btn-ghost">Réinitialiser</button>
+      </div>
+    </section>
+
+    <!-- Tableau des leads -->
+    <section class="table-wrapper">
+      <table id="leadsTable">
+        <thead>
+          <tr>
+            <th>Nom complet</th>
+            <th>Société</th>
+            <th>Source</th>
+            <th>Statut</th>
+            <th class="text-right">Valeur</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody id="leadsTableBody"></tbody>
+      </table>
+      <p id="emptyState" class="empty-state hidden">Aucun lead ne correspond à votre recherche.</p>
+
+      <div class="pagination-bar">
+        <span id="paginationInfo" class="muted small"></span>
+        <div class="pagination-controls" id="paginationControls"></div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Overlay commun (modale + tiroir) -->
+  <div id="overlay" class="overlay hidden"></div>
+
+  <!-- Modale : créer / modifier un lead -->
+  <div id="leadModal" class="modal hidden">
+    <div class="modal-content">
+      <button class="modal-close" data-close-modal>&times;</button>
+      <h2 id="leadModalTitle">Nouveau lead</h2>
+      <p id="leadFormError" class="error-msg hidden"></p>
+      <form id="leadForm">
+        <input type="hidden" id="leadId">
+        <div class="field">
+          <label for="leadName">Nom complet *</label>
+          <input type="text" id="leadName" required>
+        </div>
+        <div class="field-row">
+          <div class="field">
+            <label for="leadEmail">Email *</label>
+            <input type="email" id="leadEmail" required>
+          </div>
+          <div class="field">
+            <label for="leadPhone">Téléphone</label>
+            <input type="text" id="leadPhone">
+          </div>
+        </div>
+        <div class="field">
+          <label for="leadCompany">Société</label>
+          <input type="text" id="leadCompany">
+        </div>
+        <div class="field-row">
+          <div class="field">
+            <label for="leadSource">Source</label>
+            <select id="leadSource">
+              <option value="website">Site Web</option>
+              <option value="linkedin">LinkedIn</option>
+              <option value="referral">Référence</option>
+              <option value="email">Email</option>
+              <option value="phone">Téléphone</option>
+              <option value="other">Autre</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="leadStatus">Statut</label>
+            <select id="leadStatus">
+              <option value="new">Nouveau</option>
+              <option value="qualified">Qualifié</option>
+              <option value="contacted">Contacté</option>
+              <option value="negotiation">Négociation</option>
+              <option value="converted">Converti</option>
+              <option value="lost">Perdu</option>
+            </select>
+          </div>
+        </div>
+        <div class="field">
+          <label for="leadValue">Valeur du deal (F CFA)</label>
+          <input type="number" id="leadValue" min="0" step="1000" value="0">
+        </div>
+        <button type="submit" class="btn-primary btn-full">Enregistrer</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Tiroir de détail : lead + notes -->
+  <aside id="detailDrawer" class="drawer hidden">
+    <div class="drawer-header">
+      <div>
+        <h2 id="detailName"></h2>
+        <p class="muted small" id="detailCompany"></p>
+      </div>
+      <button class="modal-close" data-close-drawer>&times;</button>
+    </div>
+
+    <div class="drawer-body">
+      <div class="detail-meta">
+        <div><span class="detail-label">Email</span><span id="detailEmail"></span></div>
+        <div><span class="detail-label">Téléphone</span><span id="detailPhone"></span></div>
+        <div><span class="detail-label">Source</span><span id="detailSource"></span></div>
+        <div><span class="detail-label">Statut</span><span id="detailStatusBadge"></span></div>
+        <div><span class="detail-label">Valeur</span><span id="detailValue"></span></div>
+        <div><span class="detail-label">Créé le</span><span id="detailCreated"></span></div>
+      </div>
+
+      <div class="drawer-actions">
+        <button id="detailEditBtn" class="btn-outline">Modifier</button>
+        <button id="detailDeleteBtn" class="btn-danger-outline">Supprimer</button>
+      </div>
+
+      <h3>Notes de suivi</h3>
+      <div id="notesList" class="notes-list"></div>
+
+      <form id="noteForm" class="note-form">
+        <input type="hidden" id="noteLeadId">
+        <textarea id="noteText" placeholder="Ajouter une note de suivi..." required></textarea>
+        <button type="submit" class="btn-primary">Ajouter la note</button>
+      </form>
+    </div>
+  </aside>
+
+  <!-- Toasts -->
+  <div id="toastContainer" class="toast-container"></div>
+
+  <script src="js/api.js"></script>
+  <script src="js/leads.js"></script>
+</body>
+</html>
